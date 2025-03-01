@@ -1,7 +1,7 @@
 
 ### **README.md**
 
-```markdown
+
 # Object Tracker using CamShift
 
 ## Overview
@@ -66,7 +66,7 @@ The script uses the CamShift algorithm to track objects in video. Here’s a bri
 - **No Advanced Tracking Features**: CamShift is a simple algorithm and may struggle with complex scenarios. For more robust tracking, consider using modern algorithms like KCF, CSRT, or MIL.
 
 ## Acknowledgments
-This project is based on a tutorial by Adrian Rosebrock, an entrepreneur and Ph.D. who blogs at PyImageSearch.com. His detailed explanation and code examples were instrumental in creating this implementation. You can find the original blog post [here](https://pyimagesearch.com/). Special thanks to Adrian for his contributions to the computer vision community.
+This project is based on a tutorial by Adrian Rosebrock, an entrepreneur and Ph.D. who blogs at PyImageSearch.com. His detailed explanation and code examples were instrumental in creating this implementation. You can find the original blog post [here](https://pyimagesearch.com/). 
 
 ## Contributing
 Contributions are welcome! Please follow these guidelines if you'd like to contribute:
@@ -78,6 +78,4 @@ Contributions are welcome! Please follow these guidelines if you'd like to contr
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
 
----
