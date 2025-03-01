@@ -62,18 +62,32 @@ def main():
         # If the ROI has been computed
         if roiBox is not None:
             # Convert the current frame to the HSV color space
-            # and perform mean shift
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            backProj = cv2.calcBackProject([hsv], [0], roiHist, [0, 180], 1)
+
+            # Compute the back projection using both Hue and Saturation channels
+            backProj = cv2.calcBackProject([hsv], [0, 1], roiHist, [0, 180, 0, 256], 1)
 
             # Apply CamShift to the back projection, convert the
             # points to a bounding box, and then draw them
             (r, roiBox) = cv2.CamShift(backProj, roiBox, termination)
-            pts = np.int0(cv2.boxPoints(r))  # Updated from cv2.cv.BoxPoints
-            cv2.polylines(frame, [pts], True, (0, 255, 0), 2)
 
-        # Show the frame and record if the user presses a key
+            # Check if the bounding box is valid
+            if r[1][0] < 1 or r[1][1] < 1:  # If width or height is too small
+                print("Object lost!")
+                roiBox = None  # Reset the ROI
+            else:
+                # Convert the points to a bounding box and draw them
+                pts = np.int0(cv2.boxPoints(r))  # Updated from cv2.cv.BoxPoints
+                cv2.polylines(frame, [pts], True, (0, 255, 0), 2)
+
+        # Show the frame
         cv2.imshow("frame", frame)
+
+        # Check if the window is closed
+        if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+            break
+
+        # Record if the user presses a key
         key = cv2.waitKey(1) & 0xFF
 
         # Handle if the 'i' key is pressed, then go into ROI selection mode
@@ -100,9 +114,9 @@ def main():
             roi = orig[tl[1]:br[1], tl[0]:br[0]]
             roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
-            # Compute an HSV histogram for the ROI and store the
+            # Compute a 2D HSV histogram for the ROI and store the
             # bounding box
-            roiHist = cv2.calcHist([roi], [0], None, [16], [0, 180])
+            roiHist = cv2.calcHist([roi], [0, 1], None, [16, 16], [0, 180, 0, 256])
             roiHist = cv2.normalize(roiHist, roiHist, 0, 255, cv2.NORM_MINMAX)
             roiBox = (tl[0], tl[1], br[0] - tl[0], br[1] - tl[1])
 
@@ -116,3 +130,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
