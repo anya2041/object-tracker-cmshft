@@ -98,3 +98,8 @@ if key == ord("i") and len(roiPts) < 4:
 # if the 'q' key is pressed, stop the loop
 elif key == ord("q"):
  break
+# cleanup the camera and close any open windows
+camera.release()
+cv2.destroyAllWindows()
+if __name__ == "__main__":
+ main()
