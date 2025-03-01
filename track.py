@@ -20,6 +20,7 @@ def selectROI(event, x, y, flags, param):
     roiPts.append((x, y))
     cv2.circle(frame, (x, y), 4, (0, 255, 0), 2)
     cv2.imshow("frame", frame)
+ 
  def main():
  # construct the argument parse and parse the arguments
  ap = argparse.ArgumentParser()
@@ -63,3 +64,37 @@ while True:
  (r, roiBox) = cv2.CamShift(backProj, roiBox, termination)
  pts = np.int0(cv2.cv.BoxPoints(r))
  cv2.polylines(frame, [pts], True, (0, 255, 0), 2)
+# show the frame and record if the user presses a key
+cv2.imshow("frame", frame)
+key = cv2.waitKey(1) & 0xFF
+# handle if the 'i' key is pressed, then go into ROI
+# selection mode
+if key == ord("i") and len(roiPts) < 4:
+ # indicate that we are in input mode and clone the
+ # frame
+ inputMode = True
+ orig = frame.copy()
+ # keep looping until 4 reference ROI points have
+ # been selected; press any key to exit ROI selction
+ # mode once 4 points have been selected
+ while len(roiPts) < 4:
+ cv2.imshow("frame", frame)
+ cv2.waitKey(0)
+ # determine the top-left and bottom-right points
+ roiPts = np.array(roiPts)
+ s = roiPts.sum(axis = 1)
+ tl = roiPts[np.argmin(s)]
+ br = roiPts[np.argmax(s)]
+ # grab the ROI for the bounding box and convert it
+ # to the HSV color space
+ roi = orig[tl[1]:br[1], tl[0]:br[0]]
+ roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+ #roi = cv2.cvtColor(roi, cv2.COLOR_BGR2LAB)
+ # compute a HSV histogram for the ROI and store the
+ # bounding box
+ roiHist = cv2.calcHist([roi], [0], None, [16], [0, 180])
+ roiHist = cv2.normalize(roiHist, roiHist, 0, 255, cv2.NORM_MINMAX)
+ roiBox = (tl[0], tl[1], br[0], br[1])
+# if the 'q' key is pressed, stop the loop
+elif key == ord("q"):
+ break
